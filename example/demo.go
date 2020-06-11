@@ -70,5 +70,5 @@ func main() {
 		fmt.Println(err)
 	}
 
-	doc.SaveAS("1111.doc")
+	doc.SaveAS("example/document.doc")
 }
