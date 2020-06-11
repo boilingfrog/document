@@ -1,20 +1,15 @@
-# report
-[![goreference](https://camo.githubusercontent.com/54cdb0625734111924a15177602fc59799873c91/68747470733a2f2f676f646f632e6f72672f6769746875622e636f6d2f4c75787572696f7573742f657863656c697a653f7374617475732e737667)](https://godoc.org/github.com/scbizu/report/)
-[![CircleCI](https://circleci.com/gh/scbizu/report/tree/master.svg?style=svg)](https://circleci.com/gh/scbizu/report/tree/master)
+# document
 
-manually write doc(docx) by Word XML 2003
+### 前言
 
-## Support :
+在`https://github.com/scbizu/report`中实现xml的基础上，实现了`buffer`操作文件， 支持`office2003`。
 
-  * MS Office 2003 +
-  * WPS
+### 如何使用
 
-## How it Works :
 
-Firstly, the `.doc` file is a special `.xml` file if you open a doc with an editor like atom or vscode, so ,if you want to generate the doc file in the code side, you will just need to marshal your content in the doc's way ,it means that you should follow office's official OOXML guidebook .
+### 待实现
 
-What the `report` do is that it will provide some useful SDKs to simplify your coding .
+文档内容的替换功能
 
-You can learn more about it by checking `example` directory as well as clicking the `godoc` button.
 
-Thanks for watching it :)   
+
