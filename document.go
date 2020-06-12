@@ -134,9 +134,9 @@ func (doc *Document) WriteEndHead() error {
 	if err != nil {
 		return err
 	}
-	doc.Writer.WriteString(XMLEndHead)
+	_, err = doc.Writer.WriteString(XMLEndHead)
 
-	return nil
+	return err
 }
 
 func (doc *Document) WriteEndHeadWithText(sethdr bool, ftrmode string, hdr string, ftr string) error {
@@ -146,7 +146,7 @@ func (doc *Document) WriteEndHeadWithText(sethdr bool, ftrmode string, hdr strin
 	}
 	//set HDR
 	if sethdr {
-		doc.writehdr(hdr)
+		_ = doc.writehdr(hdr)
 	}
 	//set FTR
 	if ftrmode != "" {
