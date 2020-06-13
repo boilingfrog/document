@@ -416,17 +416,29 @@
 	  <w:body>
 	    <wx:sect>
 <w:p>
-		<w:pPr>
-			<w:pStyle w:val="1"/>
-			<w:jc w:val="center"/>
-		</w:pPr>
-		<w:r>
-		<w:rPr>
-			<w:color w:val="000000"/>
-		</w:rPr>
-			<w:t>测试文档</w:t>
-		</w:r>
-	</w:p>
+<w:pPr>
+		<w:pStyle w:val="1"/>
+		<w:jc w:val="center"/>
+		<w:textAlignment w:val="center"/>
+	</w:pPr>
+	<w:r>
+			<w:pict>
+					<w:binData w:name="wordml://1.gif">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</w:binData>
+						<v:shape id="_x0000_s1026" o:spt="75" alt="titlepic.gif" type="#_x0000_t75" style="height:50pt;width:50pt;"
+						filled="f" o:preferrelative="t" stroked="f" coordsize="21600,21600">
+							<v:fill on="f" focussize="0,0"/>
+							<v:stroke on="f"/>
+							<v:imagedata src="wordml://1.gif" o:title="titlepic.gif"/>
+							<o:lock v:ext="edit" aspectratio="t"/>
+							<w10:wrap type="none"/>
+							<w10:anchorlock/>
+						</v:shape>
+			</w:pict>
+	</w:r>
+<w:r>
+		<w:t>测试文档</w:t>
+	</w:r>
+</w:p>
 <w:p>
     <w:pPr>
       <w:pStyle w:val="3"/>
@@ -852,7 +864,21 @@
 		<w:spacing w:line="360" w:line-rule="exact"/>
 		<w:textAlignment w:val="center"/>
 	</w:pPr>
-	<w:pPr>
+	<w:r>
+		<w:pict>
+				<w:binData w:name="wordml://1.gif">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</w:binData>
+					<v:shape id="_x0000_s1026" o:spt="75" alt="titlepic.gif" type="#_x0000_t75" style="height:16pt;width:16pt;"
+					filled="f" o:preferrelative="t" stroked="f" coordsize="21600,21600">
+						<v:fill on="f" focussize="0,0"/>
+						<v:stroke on="f"/>
+						<v:imagedata src="wordml://1.gif" o:title="titlepic.gif"/>
+						<o:lock v:ext="edit" aspectratio="t"/>
+						<w10:wrap type="none"/>
+						<w10:anchorlock/>
+					</v:shape>
+		</w:pict>
+</w:r>
+<w:pPr>
 	<w:jc w:val="left"/>
 	<w:textAlignment w:val="center"/>
 		</w:pPr>
@@ -863,7 +889,7 @@
 	<w:sz w:val="19"/>
 	<w:sz-cs w:val="19"/>
 </w:rPr>
-	<w:t>监督人员：yuelei</w:t>
+	<w:t>风险值:6.9</w:t>
 </w:r>
 </w:p>
 

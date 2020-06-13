@@ -13,9 +13,8 @@ func main() {
 		fmt.Println(err)
 	}
 
-	if err := doc.WriteTitle(document.NewText("测试文档")); err != nil {
-		fmt.Println(err)
-	}
+	image1 := document.NewImage("1.gif", "images/titlepic.gif", 50.00, 50.00, "")
+	doc.WriteImage(true, "测试文档", image1)
 
 	if err := doc.WriteTitle3(document.NewText("                                  ———Web应用扫描")); err != nil {
 		fmt.Println(err)
@@ -26,6 +25,7 @@ func main() {
 		{document.NewText("监督时间")},
 		{document.NewText("2020-06-04")},
 	}
+
 	table := [][]*document.TableTD{
 		{
 			document.NewTableTD([]interface{}{document.NewText("监督内容")}),
@@ -40,7 +40,7 @@ func main() {
 			document.NewTableTD([]interface{}{document.NewText("今天天气好吗")}),
 		},
 		{
-			document.NewTableTD([]interface{}{document.NewText("监督人员：yuelei")}),
+			document.NewTableTD([]interface{}{image1, document.NewText("风险值:6.9")}),
 		},
 		{
 			document.NewTableTD([]interface{}{document.NewText("部门领导：")}),
