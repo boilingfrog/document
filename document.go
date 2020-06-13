@@ -312,16 +312,21 @@ func (doc *Document) WriteTable(table *Table) error {
 	for k, v := range tableBody {
 
 		XMLTable.WriteString(XMLTableTR)
-
+		// 处理gridSpan
 		for kk, vv := range v {
-			//td bg
+			var gridSpanNum int
+			if gridSpan != nil && len(gridSpan) >= k && len(gridSpan) > 0 && len(gridSpan[k]) >= kk && len(gridSpan[k]) > 0 {
+				gridSpanNum = gridSpan[k][kk]
+			}
+
+			// td bg
 			var td string
 			if vv.TDBG {
-				//Span formation
-				td = fmt.Sprintf(XMLTableTD, strconv.FormatInt(int64(tdw[kk]), 10), "E7E6E6", strconv.FormatInt(int64(gridSpan[k][kk]), 10))
+				// Span formation
+				td = fmt.Sprintf(XMLTableTD, tdw[kk], "E7E6E6", gridSpanNum)
 			} else {
-				//Span formation
-				td = fmt.Sprintf(XMLTableTD, strconv.FormatInt(int64(tdw[kk]), 10), "auto", strconv.FormatInt(int64(gridSpan[k][kk]), 10))
+				// Span formation
+				td = fmt.Sprintf(XMLTableTD, tdw[kk], "auto", gridSpanNum)
 			}
 			if _, err := XMLTable.WriteString(td); err != nil {
 				return err

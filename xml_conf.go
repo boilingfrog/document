@@ -661,9 +661,9 @@ const (
 	//XMLTableTD ...
 	XMLTableTD = `<w:tc>
   <w:tcPr>
-	              <w:tcW w:w="%s" w:type="dxa"/>
+	              <w:tcW w:w="%d" w:type="dxa"/>
     <w:shd w:val="clear" w:color="auto" w:fill="%s"/>
-			<w:gridSpan w:val="%s"/>
+			<w:gridSpan w:val="%d"/>
   </w:tcPr>
 `
 	//XMLTableInTableTD ...
