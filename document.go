@@ -12,71 +12,6 @@ import (
 	"strconv"
 )
 
-// 通过buffer实现文件的操作
-type Document struct {
-	Buffer *bytes.Buffer
-	Writer *bufio.Writer
-}
-
-//Text include text configuration
-type Text struct {
-	Words    string `json:"word"`
-	Color    string `json:"color"`
-	Size     string `json:"size"`
-	IsBold   bool   `json:"IsBold"`
-	IsCenter bool   `json:"iscenter"`
-}
-
-//Image include image configuration.
-type Image struct {
-	//This image will link to ?
-	Hyperlink string `json:"hyperlink"`
-	//destination of the URI in WORD (where it will go to?)
-	URIDist string `json:"uridist"`
-	//source of the image
-	ImageSrc string `json:"imagesrc"`
-	//image height  (pixel)
-	Height float64 `json:"height"`
-	//image width  (pixel)
-	Width float64 `json:"width"`
-	//Zoom image     (pixel)  You'd bette not to change this default value
-	CoordsizeX int `json:"coordsizeX"`
-	//Zoom
-	CoordsizeY int `json:"coordsizeY"`
-}
-
-//TableTD descripes every block of the table
-type TableTD struct {
-	//TData refers block's element
-	TData []interface{} `json:"tdata"`
-	//TDBG refers block's background
-	TDBG bool `json:"tdbg"`
-}
-
-//Table include table configuration.
-type Table struct {
-	//Tbname  is the name of the table
-	Tbname string `json:"tbname"`
-	//Text OR Image in the sanme line
-	Inline bool `json:"inline"`
-	//Table data except table head
-	TableBody [][]*TableTD `json:"tablebody"`
-	//Table head data
-	TableHead [][]interface{} `json:"tableHead"`
-	// NOTE: Because of  the title line ,the Total width is 8380.
-	//Table head width,you should  list all width inside the table head          (pixel)
-	Thw []int `json:"thw"`
-	//Table body width ,you should list all width inside the table body     (pixel)
-	Tdw []int `json:"tdw"`
-	// table height
-	Tdh []int `json:"tdh"`
-	///////////////////////////////////////////////////////////
-	//you can merge cells use GridSpan ,if you need not ,just set 0.
-	GridSpan [][]int `json:"gridspan"`
-	//Thcenter set table head center word
-	Thcenter bool `json:"thcenter"`
-}
-
 // 初始化
 func NewDoc() *Document {
 	b := bytes.NewBuffer(make([]byte, 0))
@@ -299,7 +234,7 @@ func (doc *Document) WriteTable(table *Table) error {
 
 			if inline {
 				var err error
-				if table.Thcenter {
+				if table.ThCenter {
 					_, err = XMLTable.WriteString(XMLHeadTableTDBegin2C)
 				} else {
 					_, err = XMLTable.WriteString(XMLHeadTableTDBegin2)
@@ -311,7 +246,7 @@ func (doc *Document) WriteTable(table *Table) error {
 			for _, rowEle := range rowdata {
 				var err error
 				if !inline {
-					if table.Thcenter {
+					if table.ThCenter {
 						_, err = XMLTable.WriteString(XMLHeadTableTDBegin2C)
 					} else {
 						_, err = XMLTable.WriteString(XMLHeadTableTDBegin2)
@@ -577,8 +512,8 @@ func (doc *Document) WriteImage(withtext bool, text string, imagesData ...*Image
 	for _, imagedata := range imagesData {
 		imageSrc := imagedata.ImageSrc
 		URIDist := imagedata.URIDist
-		coordsizeX := imagedata.CoordsizeX
-		coordsizeY := imagedata.CoordsizeY
+		coordsizeX := imagedata.CoordSizeX
+		coordsizeY := imagedata.CoordSizeY
 		height := imagedata.Height
 		width := imagedata.Width
 		hyperlink := imagedata.Hyperlink
@@ -672,7 +607,7 @@ func writeTableToBuffer(table *Table) (string, error) {
 			}
 			if inline {
 				var err error
-				if table.Thcenter {
+				if table.ThCenter {
 					_, err = XMLTable.WriteString(XMLHeadTableTDBegin2C)
 				} else {
 					_, err = XMLTable.WriteString(XMLHeadTableTDBegin2)
@@ -684,7 +619,7 @@ func writeTableToBuffer(table *Table) (string, error) {
 			for _, rowEle := range rowdata {
 				if !inline {
 					var err error
-					if table.Thcenter {
+					if table.ThCenter {
 						_, err = XMLTable.WriteString(XMLHeadTableTDBegin2C)
 					} else {
 						_, err = XMLTable.WriteString(XMLHeadTableTDBegin2)
@@ -986,8 +921,8 @@ func NewImage(URIdist string, imageSrc string, height float64, width float64, hy
 	img.ImageSrc = imageSrc
 	img.Height = height
 	img.Width = width
-	img.CoordsizeX = 21600
-	img.CoordsizeY = 21600
+	img.CoordSizeX = 21600
+	img.CoordSizeY = 21600
 	img.Hyperlink = hyperlink
 	return img
 }
@@ -1004,13 +939,13 @@ func NewTable(tbname string, inline bool, tableBody [][]*TableTD, tableHead [][]
 	table.Tdh = tdh
 
 	table.GridSpan = gridSpan
-	table.Thcenter = false
+	table.ThCenter = false
 	return table
 }
 
 //SetHeadCenter set table head center word
 func (tb *Table) SetHeadCenter(center bool) {
-	tb.Thcenter = center
+	tb.ThCenter = center
 }
 
 //NewText create word with default setting
