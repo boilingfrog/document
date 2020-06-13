@@ -52,11 +52,8 @@ func (doc *Document) SaveTo(writer io.Writer) error {
 //WriteHead init the header
 func (doc *Document) WriteHead() error {
 	_, err := doc.Writer.WriteString(XMLHead)
-	if err != nil {
-		return err
-	}
 	// color.Blue("[LOG]:WriteHead wrote" + strconv.FormatInt(int64(count), 10) + "bytes")
-	return nil
+	return err
 }
 
 func (doc *Document) WriteEndHead() error {
@@ -95,10 +92,10 @@ func (doc *Document) WriteEndHeadWithText(sethdr bool, ftrmode string, hdr strin
 		}
 	}
 
-	_, err = doc.Writer.WriteString(XMLSectEnd)
-	if err != nil {
+	if _, err := doc.Writer.WriteString(XMLSectEnd); err != nil {
 		return err
 	}
+
 	_, err = doc.Writer.WriteString(XMLEndHead)
 
 	return err
@@ -383,23 +380,15 @@ func (doc *Document) WriteTable(table *Table) error {
 						var err error
 						if text.IsCenter {
 							if text.IsBold {
-								if _, err = XMLTable.WriteString(XMLHeadtableTDTextBC); err != nil {
-									return err
-								}
+								_, err = XMLTable.WriteString(XMLHeadtableTDTextBC)
 							} else {
-								if _, err = XMLTable.WriteString(XMLHeadtableTDTextC); err != nil {
-									return err
-								}
+								_, err = XMLTable.WriteString(XMLHeadtableTDTextC)
 							}
 						} else {
 							if text.IsBold {
-								if _, err = XMLTable.WriteString(XMLHeadtableTDTextB); err != nil {
-									return err
-								}
+								_, err = XMLTable.WriteString(XMLHeadtableTDTextB)
 							} else {
-								if _, err = XMLTable.WriteString(XMLHeadtableTDText); err != nil {
-									return err
-								}
+								_, err = XMLTable.WriteString(XMLHeadtableTDText)
 							}
 						}
 						if err != nil {
@@ -488,10 +477,7 @@ func (doc *Document) WriteTable(table *Table) error {
 	tabledata := fmt.Sprintf(XMLTable.String(), rows...)
 
 	_, err := doc.Writer.WriteString(tabledata)
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 // WriteImage == 写入图片
