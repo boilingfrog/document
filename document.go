@@ -23,7 +23,7 @@ type Text struct {
 	Words    string `json:"word"`
 	Color    string `json:"color"`
 	Size     string `json:"size"`
-	Isbold   bool   `json:"isbold"`
+	IsBold   bool   `json:"IsBold"`
 	IsCenter bool   `json:"iscenter"`
 }
 
@@ -62,7 +62,7 @@ type Table struct {
 	//Table data except table head
 	TableBody [][]*TableTD `json:"tablebody"`
 	//Table head data
-	TableHead [][]interface{} `json:"tablehead"`
+	TableHead [][]interface{} `json:"tableHead"`
 	// NOTE: Because of  the title line ,the Total width is 8380.
 	//Table head width,you should  list all width inside the table head          (pixel)
 	Thw []int `json:"thw"`
@@ -106,7 +106,7 @@ func (doc *Document) SaveAS(name string) error {
 // SaveTo ...
 func (doc *Document) SaveTo(writer io.Writer) error {
 	if err := doc.Writer.Flush(); err != nil {
-		return nil
+		return err
 	}
 
 	_, err := doc.Buffer.WriteTo(writer)
@@ -134,6 +134,7 @@ func (doc *Document) WriteEndHead() error {
 	if err != nil {
 		return err
 	}
+
 	_, err = doc.Writer.WriteString(XMLEndHead)
 
 	return err
@@ -144,22 +145,28 @@ func (doc *Document) WriteEndHeadWithText(sethdr bool, ftrmode string, hdr strin
 	if err != nil {
 		return err
 	}
+
 	//set HDR
 	if sethdr {
-		_ = doc.writehdr(hdr)
+		if err := doc.writehdr(hdr); err != nil {
+			return err
+		}
 	}
+
 	//set FTR
 	if ftrmode != "" {
-		doc.writeftr(ftrmode, ftr)
+		if err := doc.writeftr(ftrmode, ftr); err != nil {
+			return err
+		}
 	}
 
 	_, err = doc.Writer.WriteString(XMLSectEnd)
 	if err != nil {
 		return err
 	}
-	doc.Writer.WriteString(XMLEndHead)
+	_, err = doc.Writer.WriteString(XMLEndHead)
 
-	return nil
+	return err
 }
 
 //WriteTitle == 居中大标题
@@ -168,11 +175,8 @@ func (doc *Document) WriteTitle(text *Text) error {
 	word := text.Words
 	Title := fmt.Sprintf(XMLTitle, color, word)
 	_, err := doc.Writer.WriteString(Title)
-	if err != nil {
-		return err
-	}
 
-	return nil
+	return err
 }
 
 //WriteTitle1 == 标题1的格式
@@ -181,11 +185,8 @@ func (doc *Document) WriteTitle1(text *Text) error {
 	word := text.Words
 	Title1 := fmt.Sprintf(XMLTitle1, color, word)
 	_, err := doc.Writer.WriteString(Title1)
-	if err != nil {
-		return err
-	}
 
-	return nil
+	return err
 }
 
 //WriteTitle2 == 标题2的格式
@@ -194,21 +195,16 @@ func (doc *Document) WriteTitle2(text *Text) error {
 	word := text.Words
 	Title2 := fmt.Sprintf(XMLTitle2, color, word)
 	_, err := doc.Writer.WriteString(Title2)
-	if err != nil {
-		return err
-	}
-	return nil
+
+	return err
 }
 
 //WriteTitle2WithGrayBg == 灰色panel背景的标题2
 func (doc *Document) WriteTitle2WithGrayBg(text string) error {
 	Title2Gray := fmt.Sprintf(XMLTitle2WithGrayBg, text)
 	_, err := doc.Writer.WriteString(Title2Gray)
-	if err != nil {
-		return err
-	}
 	//color.Blue("[LOG]:WriteTitle2WithGrayBg Wrote" + strconv.FormatInt(int64(count), 10) + "bytes")
-	return nil
+	return err
 }
 
 //WriteTitle3 == 标题3的格式
@@ -217,22 +213,16 @@ func (doc *Document) WriteTitle3(text *Text) error {
 	word := text.Words
 	Title3 := fmt.Sprintf(XMLTitle3, color, word)
 	_, err := doc.Writer.WriteString(Title3)
-	if err != nil {
-		return err
-	}
 	//color.Blue("[LOG]:WriteTitle3 Wrote" + strconv.FormatInt(int64(count), 10) + "bytes")
-	return nil
+	return err
 }
 
 //WriteTitle3WithGrayBg == 灰色panel背景的标题3
 func (doc *Document) WriteTitle3WithGrayBg(text string) error {
 	Title3Gray := fmt.Sprintf(XMLTitle3WithGrayBg, text)
 	_, err := doc.Writer.WriteString(Title3Gray)
-	if err != nil {
-		return err
-	}
 	//color.Blue("[LOG]:WriteTitle2WithGrayBg Wrote" + strconv.FormatInt(int64(count), 10) + "bytes")
-	return nil
+	return err
 }
 
 //WriteTitle4 == 标题4的格式
@@ -240,10 +230,8 @@ func (doc *Document) WriteTitle4(text *Text) error {
 	word := text.Words
 	Title4 := fmt.Sprintf(XMLTitle4, word)
 	_, err := doc.Writer.WriteString(Title4)
-	if err != nil {
-		return err
-	}
-	return nil
+
+	return err
 }
 
 //WriteText == 正文的格式
@@ -253,33 +241,29 @@ func (doc *Document) WriteText(text *Text) error {
 	word := text.Words
 	var Text string
 	if text.IsCenter {
-		if text.Isbold {
+		if text.IsBold {
 			Text = fmt.Sprintf(XMLCenterBoldText, color, size, size, word)
 		} else {
 			Text = fmt.Sprintf(XMLCenterText, color, size, size, word)
 		}
 	} else {
-		if text.Isbold {
+		if text.IsBold {
 			Text = fmt.Sprintf(XMLBoldText, color, size, size, word)
 		} else {
 			Text = fmt.Sprintf(XMLText, color, size, size, word)
 		}
 	}
 	_, err := doc.Writer.WriteString(Text)
-	if err != nil {
-		return err
-	}
+
 	//color.Blue("[LOG]:WriteText Wrote" + strconv.FormatInt(int64(count), 10) + "bytes")
-	return nil
+	return err
 }
 
 //WriteBR == 换行
 func (doc *Document) WriteBR() error {
 	_, err := doc.Writer.WriteString(XMLBr)
-	if err != nil {
-		return err
-	}
-	return nil
+
+	return err
 }
 
 //WriteTable  ==表格的格式
@@ -297,25 +281,43 @@ func (doc *Document) WriteTable(table *Table) error {
 	used = false
 	//handle TableHead :Split with TableBody
 	if tableHead != nil {
-		tablehead := fmt.Sprintf(XMLTableHead, tbname)
-		XMLTable.WriteString(tablehead)
-		XMLTable.WriteString(XMLTableHeadTR)
+		tableHeadXML := fmt.Sprintf(XMLTableHead, tbname)
+
+		if _, err := XMLTable.WriteString(tableHeadXML); err != nil {
+			return err
+		}
+
+		if _, err := XMLTable.WriteString(XMLTableHeadTR); err != nil {
+			return err
+		}
+
 		for thindex, rowdata := range tableHead {
 			thw := fmt.Sprintf(XMLHeadTableTDBegin, strconv.FormatInt(int64(thw[thindex]), 10))
-			XMLTable.WriteString(thw)
+			if _, err := XMLTable.WriteString(thw); err != nil {
+				return err
+			}
+
 			if inline {
+				var err error
 				if table.Thcenter {
-					XMLTable.WriteString(XMLHeadTableTDBegin2C)
+					_, err = XMLTable.WriteString(XMLHeadTableTDBegin2C)
 				} else {
-					XMLTable.WriteString(XMLHeadTableTDBegin2)
+					_, err = XMLTable.WriteString(XMLHeadTableTDBegin2)
+				}
+				if err != nil {
+					return err
 				}
 			}
 			for _, rowEle := range rowdata {
+				var err error
 				if !inline {
 					if table.Thcenter {
-						XMLTable.WriteString(XMLHeadTableTDBegin2C)
+						_, err = XMLTable.WriteString(XMLHeadTableTDBegin2C)
 					} else {
-						XMLTable.WriteString(XMLHeadTableTDBegin2)
+						_, err = XMLTable.WriteString(XMLHeadTableTDBegin2)
+					}
+					if err != nil {
+						return err
 					}
 				}
 				if image, ok := rowEle.(*Image); ok {
@@ -324,7 +326,9 @@ func (doc *Document) WriteTable(table *Table) error {
 					if err != nil {
 						return err
 					}
-					XMLTable.WriteString(str)
+					if _, err := XMLTable.WriteString(str); err != nil {
+						return err
+					}
 				} else if text, ok := rowEle.(*Text); ok {
 					//not
 					color := text.Color
@@ -332,33 +336,45 @@ func (doc *Document) WriteTable(table *Table) error {
 					word := text.Words
 					var data string
 					if text.IsCenter {
-						if text.Isbold {
+						if text.IsBold {
 							data = fmt.Sprintf(XMLHeadtableTDTextBC, color, size, size, word)
 						} else {
 							data = fmt.Sprintf(XMLHeadtableTDTextC, color, size, size, word)
 						}
 					} else {
-						if text.Isbold {
+						if text.IsBold {
 							data = fmt.Sprintf(XMLHeadtableTDTextB, color, size, size, word)
 						} else {
 							data = fmt.Sprintf(XMLHeadtableTDText, color, size, size, word)
 						}
 					}
-					XMLTable.WriteString(data)
+					if _, err := XMLTable.WriteString(data); err != nil {
+						return err
+					}
 				}
 				if !inline {
-					XMLTable.WriteString(XMLIMGtail)
+					if _, err := XMLTable.WriteString(XMLIMGtail); err != nil {
+						return err
+					}
 				}
 			}
 			if inline {
-				XMLTable.WriteString(XMLIMGtail)
+				if _, err := XMLTable.WriteString(XMLIMGtail); err != nil {
+					return err
+				}
 			}
-			XMLTable.WriteString(XMLHeadTableTDEnd)
+			if _, err := XMLTable.WriteString(XMLHeadTableTDEnd); err != nil {
+				return err
+			}
 		}
-		XMLTable.WriteString(XMLTableEndTR)
+		if _, err := XMLTable.WriteString(XMLTableEndTR); err != nil {
+			return err
+		}
 	} else {
 		nohead := fmt.Sprintf(XMLTableNoHead, tbname)
-		XMLTable.WriteString(nohead)
+		if _, err := XMLTable.WriteString(nohead); err != nil {
+			return err
+		}
 	}
 	//Generate formation
 	for k, v := range tableBody {
@@ -375,7 +391,9 @@ func (doc *Document) WriteTable(table *Table) error {
 				//Span formation
 				td = fmt.Sprintf(XMLTableTD, strconv.FormatInt(int64(tdw[kk]), 10), "auto", strconv.FormatInt(int64(gridSpan[k][kk]), 10))
 			}
-			XMLTable.WriteString(td)
+			if _, err := XMLTable.WriteString(td); err != nil {
+				return err
+			}
 			tds := 0
 
 			// vv.TData = append(vv.TData, "")
@@ -384,10 +402,14 @@ func (doc *Document) WriteTable(table *Table) error {
 
 				table, ok := vvv.(*Table)
 				if !inline && !ok {
-					XMLTable.WriteString(XMLTableTD2)
+					if _, err := XMLTable.WriteString(XMLTableTD2); err != nil {
+						return err
+					}
 				}
 				if inline && !ok && tds == 0 {
-					XMLTable.WriteString(XMLTableTD2)
+					if _, err := XMLTable.WriteString(XMLTableTD2); err != nil {
+						return err
+					}
 
 				}
 				//if td is a table
@@ -399,32 +421,54 @@ func (doc *Document) WriteTable(table *Table) error {
 					if err != nil {
 						return err
 					}
-					XMLTable.WriteString(tablestr)
+					if _, err := XMLTable.WriteString(tablestr); err != nil {
+						return err
+					}
 					// FIXME: magic operation
-					XMLTable.WriteString(XMLMagicFooter)
+					if _, err := XMLTable.WriteString(XMLMagicFooter); err != nil {
+						return err
+					}
 					//image or text
 				} else {
 					if icon, ko := vvv.(*Image); ko {
 						if icon.Hyperlink != "" {
-							XMLTable.WriteString(XMLImageLinkTitle)
+							if _, err := XMLTable.WriteString(XMLImageLinkTitle); err != nil {
+								return err
+							}
 						}
-						XMLTable.WriteString(XMLIcon)
+						if _, err := XMLTable.WriteString(XMLIcon); err != nil {
+							return err
+						}
 						if icon.Hyperlink != "" {
-							XMLTable.WriteString(XMLImageLinkEnd)
+							if _, err := XMLTable.WriteString(XMLImageLinkEnd); err != nil {
+								return err
+							}
 						}
 					} else if text, ko := vvv.(*Text); ko {
+						var err error
 						if text.IsCenter {
-							if text.Isbold {
-								XMLTable.WriteString(XMLHeadtableTDTextBC)
+							if text.IsBold {
+								if _, err = XMLTable.WriteString(XMLHeadtableTDTextBC); err != nil {
+									return err
+								}
 							} else {
-								XMLTable.WriteString(XMLHeadtableTDTextC)
+								if _, err = XMLTable.WriteString(XMLHeadtableTDTextC); err != nil {
+									return err
+								}
 							}
 						} else {
-							if text.Isbold {
-								XMLTable.WriteString(XMLHeadtableTDTextB)
+							if text.IsBold {
+								if _, err = XMLTable.WriteString(XMLHeadtableTDTextB); err != nil {
+									return err
+								}
 							} else {
-								XMLTable.WriteString(XMLHeadtableTDText)
+								if _, err = XMLTable.WriteString(XMLHeadtableTDText); err != nil {
+									return err
+								}
 							}
+						}
+						if err != nil {
+							return err
 						}
 					}
 					//not end with table
@@ -435,7 +479,9 @@ func (doc *Document) WriteTable(table *Table) error {
 					// }
 
 					if !inline {
-						XMLTable.WriteString(XMLIMGtail)
+						if _, err := XMLTable.WriteString(XMLIMGtail); err != nil {
+							return err
+						}
 					}
 					// else if inline && next {
 					// 	XMLTable.WriteString(XMLIMGtail)
@@ -445,21 +491,31 @@ func (doc *Document) WriteTable(table *Table) error {
 			}
 			//not end with table
 			if inline && !used {
-				XMLTable.WriteString(XMLIMGtail)
+				if _, err := XMLTable.WriteString(XMLIMGtail); err != nil {
+					return err
+				}
 				//reset inline flag
 				// inline = false
 			}
 			// 写入高度
 			if kk == len(v)-1 && len(tdh) >= k && len(tdh) > 0 {
 				for i := 0; i < tdh[k]; i++ {
-					XMLTable.WriteString(fmt.Sprintf(XMLTableTDHeight))
+					if _, err := XMLTable.WriteString(fmt.Sprintf(XMLTableTDHeight)); err != nil {
+						return err
+					}
 				}
 			}
-			XMLTable.WriteString(XMLHeadTableTDEnd)
+			if _, err := XMLTable.WriteString(XMLHeadTableTDEnd); err != nil {
+				return err
+			}
 		}
-		XMLTable.WriteString(XMLTableEndTR)
+		if _, err := XMLTable.WriteString(XMLTableEndTR); err != nil {
+			return err
+		}
 	}
-	XMLTable.WriteString(XMLTableFooter)
+	if _, err := XMLTable.WriteString(XMLTableFooter); err != nil {
+		return err
+	}
 	//serialization
 	var rows []interface{}
 
@@ -503,16 +559,20 @@ func (doc *Document) WriteTable(table *Table) error {
 	return nil
 }
 
-//WriteImage == 写入图片
+// WriteImage == 写入图片
 func (doc *Document) WriteImage(withtext bool, text string, imagesData ...*Image) error {
 	xmlimage := bytes.Buffer{}
 	//write fontStyle
 
-	xmlimage.WriteString(XMLIMGTitle)
+	if _, err := xmlimage.WriteString(XMLIMGTitle); err != nil {
+		return err
+	}
 	if withtext {
 		//偷个懒  指定为1
 		fontStyle := fmt.Sprintf(XMLFontStyle, "1")
-		xmlimage.WriteString(fontStyle)
+		if _, err := xmlimage.WriteString(fontStyle); err != nil {
+			return err
+		}
 	}
 	for _, imagedata := range imagesData {
 		imageSrc := imagedata.ImageSrc
@@ -525,7 +585,9 @@ func (doc *Document) WriteImage(withtext bool, text string, imagesData ...*Image
 		//embedding hyperlink
 		if hyperlink != "" {
 			imageLink := fmt.Sprintf(XMLImageLinkTitle, hyperlink)
-			xmlimage.WriteString(imageLink)
+			if _, err := xmlimage.WriteString(imageLink); err != nil {
+				return err
+			}
 		}
 		bindata, err := getImagedata(imageSrc)
 		if err != nil {
@@ -534,28 +596,36 @@ func (doc *Document) WriteImage(withtext bool, text string, imagesData ...*Image
 		URI := "wordml://" + URIDist
 		imageSec := fmt.Sprintf(XMLImage, URI, bindata, filepath.Base(imageSrc), strconv.FormatFloat(height, 'f', -1, 64),
 			strconv.FormatFloat(width, 'f', -1, 64), strconv.Itoa(coordsizeY), strconv.Itoa(coordsizeX), URI, filepath.Base(imageSrc))
-		xmlimage.WriteString(imageSec)
+		if _, err := xmlimage.WriteString(imageSec); err != nil {
+			return err
+		}
 		//hyper link
 		if hyperlink != "" {
-			xmlimage.WriteString(XMLImageLinkEnd)
+			if _, err := xmlimage.WriteString(XMLImageLinkEnd); err != nil {
+				return err
+			}
 		}
 	}
 	if withtext {
 		inlineText := fmt.Sprintf(XMLInlineText, text)
-		xmlimage.WriteString(inlineText)
+		if _, err := xmlimage.WriteString(inlineText); err != nil {
+			return err
+		}
 	}
 	xmlimage.WriteString(XMLIMGtail)
-	doc.Writer.WriteString(xmlimage.String())
-	return nil
+	_, err := doc.Writer.WriteString(xmlimage.String())
+	return err
 }
 
-//writeImageToBuffer write image xml to buffer and return.
+// writeImageToBuffer write image xml to buffer and return.
 func writeImageToBuffer(image *Image) (string, error) {
 	ResImage := bytes.Buffer{}
 	// xmlimage := bytes.Buffer{}
 	// xmlimage.WriteString(XMLIMGTitle)
 	if image.Hyperlink != "" {
-		ResImage.WriteString(XMLImageLinkTitle)
+		if _, err := ResImage.WriteString(XMLImageLinkTitle); err != nil {
+			return "", err
+		}
 	}
 	imageSrc := image.ImageSrc
 	URI := "wordml://" + image.URIDist
@@ -565,8 +635,12 @@ func writeImageToBuffer(image *Image) (string, error) {
 		return "", err
 	}
 	imageSec := fmt.Sprintf(XMLIcon, URI, bindata, filepath.Base(imageSrc), URI, filepath.Base(imageSrc))
-	ResImage.WriteString(imageSec)
-	ResImage.WriteString(XMLImageLinkEnd)
+	if _, err := ResImage.WriteString(imageSec); err != nil {
+		return "", err
+	}
+	if _, err := ResImage.WriteString(XMLImageLinkEnd); err != nil {
+		return "", err
+	}
 	return ResImage.String(), nil
 }
 
@@ -584,25 +658,39 @@ func writeTableToBuffer(table *Table) (string, error) {
 	//handle TableHead :Split with TableBody
 	if tableHead != nil {
 		//表格中的表格为无边框形式
-		tablehead := fmt.Sprintf(XMLTableInTableHead, tbname)
-		XMLTable.WriteString(tablehead)
-		XMLTable.WriteString(XMLTableHeadTR)
+		tableHeadXML := fmt.Sprintf(XMLTableInTableHead, tbname)
+		if _, err := XMLTable.WriteString(tableHeadXML); err != nil {
+			return "", err
+		}
+		if _, err := XMLTable.WriteString(XMLTableHeadTR); err != nil {
+			return "", err
+		}
 		for thindex, rowdata := range tableHead {
 			thw := fmt.Sprintf(XMLHeadTableTDBegin, strconv.FormatInt(int64(thw[thindex]), 10))
-			XMLTable.WriteString(thw)
+			if _, err := XMLTable.WriteString(thw); err != nil {
+				return "", err
+			}
 			if inline {
+				var err error
 				if table.Thcenter {
-					XMLTable.WriteString(XMLHeadTableTDBegin2C)
+					_, err = XMLTable.WriteString(XMLHeadTableTDBegin2C)
 				} else {
-					XMLTable.WriteString(XMLHeadTableTDBegin2)
+					_, err = XMLTable.WriteString(XMLHeadTableTDBegin2)
+				}
+				if err != nil {
+					return "", err
 				}
 			}
 			for _, rowEle := range rowdata {
 				if !inline {
+					var err error
 					if table.Thcenter {
-						XMLTable.WriteString(XMLHeadTableTDBegin2C)
+						_, err = XMLTable.WriteString(XMLHeadTableTDBegin2C)
 					} else {
-						XMLTable.WriteString(XMLHeadTableTDBegin2)
+						_, err = XMLTable.WriteString(XMLHeadTableTDBegin2)
+					}
+					if err != nil {
+						return "", err
 					}
 				}
 				if image, ok := rowEle.(*Image); ok {
@@ -611,7 +699,9 @@ func writeTableToBuffer(table *Table) (string, error) {
 					if err != nil {
 						return "", err
 					}
-					XMLTable.WriteString(str)
+					if _, err := XMLTable.WriteString(str); err != nil {
+						return "", err
+					}
 				} else if text, ok := rowEle.(*Text); ok {
 					//not
 					color := text.Color
@@ -620,39 +710,54 @@ func writeTableToBuffer(table *Table) (string, error) {
 					var data string
 					if text.IsCenter {
 						// println(text.IsCenter)
-						if text.Isbold {
-							// println(text.Isbold)
+						if text.IsBold {
+							// println(text.IsBold)
 							data = fmt.Sprintf(XMLHeadtableTDTextBC, color, size, size, word)
 						} else {
 							data = fmt.Sprintf(XMLHeadtableTDTextC, color, size, size, word)
 						}
 					} else {
-						if text.Isbold {
+						if text.IsBold {
 							data = fmt.Sprintf(XMLHeadtableTDTextB, color, size, size, word)
 						} else {
 							data = fmt.Sprintf(XMLHeadtableTDText, color, size, size, word)
 						}
 					}
-					XMLTable.WriteString(data)
+					if _, err := XMLTable.WriteString(data); err != nil {
+						return "", err
+					}
 				}
 				if !inline {
-					XMLTable.WriteString(XMLIMGtail)
+					if _, err := XMLTable.WriteString(XMLIMGtail); err != nil {
+						return "", err
+					}
 				}
 			}
 			if inline {
-				XMLTable.WriteString(XMLIMGtail)
+				if _, err := XMLTable.WriteString(XMLIMGtail); err != nil {
+					return "", err
+				}
 			}
-			XMLTable.WriteString(XMLHeadTableTDEnd)
+			if _, err := XMLTable.WriteString(XMLHeadTableTDEnd); err != nil {
+				return "", err
+			}
 		}
-		XMLTable.WriteString(XMLTableEndTR)
+		if _, err := XMLTable.WriteString(XMLTableEndTR); err != nil {
+			return "", err
+		}
 	} else {
 		nohead := fmt.Sprintf(XMLTableInTableNoHead, tbname)
-		XMLTable.WriteString(nohead)
+
+		if _, err := XMLTable.WriteString(nohead); err != nil {
+			return "", err
+		}
 	}
 
 	//Generate formation
 	for _, v := range tableBody {
-		XMLTable.WriteString(XMLTableTR)
+		if _, err := XMLTable.WriteString(XMLTableTR); err != nil {
+			return "", err
+		}
 
 		for kk, vv := range v {
 
@@ -663,18 +768,24 @@ func writeTableToBuffer(table *Table) (string, error) {
 			} else {
 				ttd = fmt.Sprintf(XMLTableInTableTD, strconv.FormatInt(int64(tdw[kk]), 10), "auto")
 			}
-			XMLTable.WriteString(ttd)
+			if _, err := XMLTable.WriteString(ttd); err != nil {
+				return "", err
+			}
 
 			tds := 0
 			// vv.TData = append(vv.TData, "")
 			if inline {
-				XMLTable.WriteString(XMLTableTD2)
+				if _, err := XMLTable.WriteString(XMLTableTD2); err != nil {
+					return "", err
+				}
 
 			}
 			for _, vvv := range vv.TData {
 				table, ok := vvv.(*Table)
 				if !inline && !ok {
-					XMLTable.WriteString(XMLTableTD2)
+					if _, err := XMLTable.WriteString(XMLTableTD2); err != nil {
+						return "", err
+					}
 				}
 
 				//if td is a table
@@ -685,32 +796,46 @@ func writeTableToBuffer(table *Table) (string, error) {
 					if err != nil {
 						return "", err
 					}
-					XMLTable.WriteString(tablestr)
+					if _, err := XMLTable.WriteString(tablestr); err != nil {
+						return "", err
+					}
 					// FIXME: magic operation
-					XMLTable.WriteString(XMLMagicFooter)
+					if _, err := XMLTable.WriteString(XMLMagicFooter); err != nil {
+						return "", err
+					}
 					//image or text
 				} else {
 					if icon, ko := vvv.(*Image); ko {
 						if icon.Hyperlink != "" {
-							XMLTable.WriteString(XMLImageLinkTitle)
+							if _, err := XMLTable.WriteString(XMLImageLinkTitle); err != nil {
+								return "", err
+							}
 						}
-						XMLTable.WriteString(XMLIcon)
+						if _, err := XMLTable.WriteString(XMLIcon); err != nil {
+							return "", err
+						}
 						if icon.Hyperlink != "" {
-							XMLTable.WriteString(XMLImageLinkEnd)
+							if _, err := XMLTable.WriteString(XMLImageLinkEnd); err != nil {
+								return "", err
+							}
 						}
 					} else if text, ko := vvv.(*Text); ko {
+						var err error
 						if text.IsCenter {
-							if text.Isbold {
-								XMLTable.WriteString(XMLHeadtableTDTextBC)
+							if text.IsBold {
+								_, err = XMLTable.WriteString(XMLHeadtableTDTextBC)
 							} else {
-								XMLTable.WriteString(XMLHeadtableTDTextC)
+								_, err = XMLTable.WriteString(XMLHeadtableTDTextC)
 							}
 						} else {
-							if text.Isbold {
-								XMLTable.WriteString(XMLHeadtableTDTextB)
+							if text.IsBold {
+								_, err = XMLTable.WriteString(XMLHeadtableTDTextB)
 							} else {
-								XMLTable.WriteString(XMLHeadtableTDText)
+								_, err = XMLTable.WriteString(XMLHeadtableTDText)
 							}
+						}
+						if err != nil {
+							return "", err
 						}
 					}
 					//not end with table
@@ -719,27 +844,38 @@ func writeTableToBuffer(table *Table) (string, error) {
 					if tds < len(vv.TData)-1 {
 						_, next = vv.TData[tds+1].(*Table)
 					}
-
+					var err error
 					if !inline {
-						XMLTable.WriteString(XMLIMGtail)
+						_, err = XMLTable.WriteString(XMLIMGtail)
 					} else if inline && next {
-						XMLTable.WriteString(XMLIMGtail)
+						_, err = XMLTable.WriteString(XMLIMGtail)
+					}
+					if err != nil {
+						return "", err
 					}
 				}
 				tds++
 			}
 			//not end with table
 			if inline && !Bused {
-				XMLTable.WriteString(XMLIMGtail)
+				if _, err := XMLTable.WriteString(XMLIMGtail); err != nil {
+					return "", err
+				}
 				//reset inline flag
 				// inline = false
 			}
-			XMLTable.WriteString(XMLHeadTableTDEnd)
+			if _, err := XMLTable.WriteString(XMLHeadTableTDEnd); err != nil {
+				return "", err
+			}
 
 		}
-		XMLTable.WriteString(XMLTableEndTR)
+		if _, err := XMLTable.WriteString(XMLTableEndTR); err != nil {
+			return "", err
+		}
 	}
-	XMLTable.WriteString(XMLTableFooter)
+	if _, err := XMLTable.WriteString(XMLTableFooter); err != nil {
+		return "", err
+	}
 	//serialization
 	var rows []interface{}
 
@@ -884,7 +1020,7 @@ func NewText(words string) *Text {
 	text.Words = words
 	text.Color = "000000"
 	text.Size = "19"
-	text.Isbold = false
+	text.IsBold = false
 	text.IsCenter = false
 	return text
 }
@@ -901,7 +1037,7 @@ func (tx *Text) SetSize(size string) {
 
 //SetBold set bold
 func (tx *Text) SetBold(bold bool) {
-	tx.Isbold = bold
+	tx.IsBold = bold
 }
 
 //SetCenter set center  text
