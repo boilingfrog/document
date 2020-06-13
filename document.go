@@ -871,14 +871,12 @@ func (doc *Document) writehdr(text string) error {
 func (doc *Document) writeftr(mode string, text string) error {
 	switch mode {
 	case "pages":
-		_, err := doc.Writer.WriteString(XMLftrPages)
-		if err != nil {
+		if _, err := doc.Writer.WriteString(XMLftrPages); err != nil {
 			return err
 		}
 	case "text":
 		ftrtext := fmt.Sprintf(XMLftrText, text)
-		_, err := doc.Writer.WriteString(ftrtext)
-		if err != nil {
+		if _, err := doc.Writer.WriteString(ftrtext); err != nil {
 			return err
 		}
 	default:

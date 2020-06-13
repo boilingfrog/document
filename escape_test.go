@@ -7,10 +7,6 @@ import (
 
 func TestEscape(t *testing.T) {
 	doc := NewDoc()
-	if err := doc.CreateDoc("escape.doc"); err != nil {
-		t.Errorf(err.Error())
-	}
-	defer doc.CloseReport()
 
 	if err := doc.WriteHead(); err != nil {
 		t.Errorf(err.Error())
@@ -30,8 +26,7 @@ func TestEscape(t *testing.T) {
 		t.Log("TestWriteEndHead Succeed")
 	}
 
-	// 这一行要加上，结束word
-	if err := doc.WriteEndHead(); err != nil {
+	if err := doc.SaveAS("escape.doc"); err != nil {
 		t.Errorf(err.Error())
 	}
 }
@@ -49,10 +44,6 @@ func TestEscapeCauseCrash(t *testing.T) {
 	}
 
 	doc := NewDoc()
-	if err := doc.CreateDoc("escapeCauseCrash.doc"); err != nil {
-		t.Errorf(err.Error())
-	}
-	defer doc.CloseReport()
 
 	if err := doc.WriteHead(); err != nil {
 		t.Errorf(err.Error())
@@ -72,8 +63,8 @@ func TestEscapeCauseCrash(t *testing.T) {
 		t.Log("TestWriteEndHead Succeed")
 	}
 
-	// 这一行要加上，结束word
-	if err := doc.WriteEndHead(); err != nil {
+	// 保存
+	if err := doc.SaveAS("escapeCauseCrash.doc"); err != nil {
 		t.Errorf(err.Error())
 	}
 }
