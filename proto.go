@@ -49,11 +49,11 @@ type TableTD struct {
 //Table include table configuration.
 type Table struct {
 	//Tbname  is the name of the table
-	Tbname string `json:"tbname"`
+	Tbname string `json:"tbName"`
 	//Text OR Image in the sanme line
-	Inline bool `json:"inline"`
+	Inline bool `json:"inLine"`
 	//Table data except table head
-	TableBody [][]*TableTD `json:"tablebody"`
+	TableBody [][]*TableTD `json:"tableBody"`
 	//Table head data
 	TableHead [][]interface{} `json:"tableHead"`
 	// NOTE: Because of  the title line ,the Total width is 8380.
