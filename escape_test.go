@@ -43,7 +43,7 @@ func TestEscapeCauseCrash(t *testing.T) {
 		text.Words = words
 		text.Color = "000000"
 		text.Size = "19"
-		text.Isbold = false
+		text.IsBold = false
 		text.IsCenter = false
 		return text
 	}
