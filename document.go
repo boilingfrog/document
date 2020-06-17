@@ -16,8 +16,8 @@ import (
 func NewDoc() *Document {
 	b := bytes.NewBuffer(make([]byte, 0))
 	return &Document{
-		Buffer: b,
-		Writer: bufio.NewWriter(b),
+		buffer: b,
+		writer: bufio.NewWriter(b),
 	}
 }
 
@@ -29,51 +29,51 @@ func (doc *Document) SaveAS(name string) error {
 	}
 	defer file.Close()
 
-	if err := doc.Writer.Flush(); err != nil {
+	if err := doc.writer.Flush(); err != nil {
 		return nil
 	}
 
-	_, err = doc.Buffer.WriteTo(file)
+	_, err = doc.buffer.WriteTo(file)
 
 	return err
 }
 
 // SaveTo ...
 func (doc *Document) SaveTo(writer io.Writer) error {
-	if err := doc.Writer.Flush(); err != nil {
+	if err := doc.writer.Flush(); err != nil {
 		return err
 	}
 
-	_, err := doc.Buffer.WriteTo(writer)
+	_, err := doc.buffer.WriteTo(writer)
 
 	return err
 }
 
 //WriteHead init the header
 func (doc *Document) WriteHead() error {
-	_, err := doc.Writer.WriteString(XMLHead)
+	_, err := doc.writer.WriteString(XMLHead)
 	// color.Blue("[LOG]:WriteHead wrote" + strconv.FormatInt(int64(count), 10) + "bytes")
 	return err
 }
 
 func (doc *Document) WriteEndHead() error {
-	_, err := doc.Writer.WriteString(XMLSectBegin)
+	_, err := doc.writer.WriteString(XMLSectBegin)
 	if err != nil {
 		return err
 	}
 
-	_, err = doc.Writer.WriteString(XMLSectEnd)
+	_, err = doc.writer.WriteString(XMLSectEnd)
 	if err != nil {
 		return err
 	}
 
-	_, err = doc.Writer.WriteString(XMLEndHead)
+	_, err = doc.writer.WriteString(XMLEndHead)
 
 	return err
 }
 
 func (doc *Document) WriteEndHeadWithText(sethdr bool, ftrmode string, hdr string, ftr string) error {
-	_, err := doc.Writer.WriteString(XMLSectBegin)
+	_, err := doc.writer.WriteString(XMLSectBegin)
 	if err != nil {
 		return err
 	}
@@ -92,11 +92,11 @@ func (doc *Document) WriteEndHeadWithText(sethdr bool, ftrmode string, hdr strin
 		}
 	}
 
-	if _, err := doc.Writer.WriteString(XMLSectEnd); err != nil {
+	if _, err := doc.writer.WriteString(XMLSectEnd); err != nil {
 		return err
 	}
 
-	_, err = doc.Writer.WriteString(XMLEndHead)
+	_, err = doc.writer.WriteString(XMLEndHead)
 
 	return err
 }
@@ -106,7 +106,7 @@ func (doc *Document) WriteTitle(text *Text) error {
 	color := text.Color
 	word := text.Words
 	Title := fmt.Sprintf(XMLTitle, color, word)
-	_, err := doc.Writer.WriteString(Title)
+	_, err := doc.writer.WriteString(Title)
 
 	return err
 }
@@ -116,7 +116,7 @@ func (doc *Document) WriteTitle1(text *Text) error {
 	color := text.Color
 	word := text.Words
 	Title1 := fmt.Sprintf(XMLTitle1, color, word)
-	_, err := doc.Writer.WriteString(Title1)
+	_, err := doc.writer.WriteString(Title1)
 
 	return err
 }
@@ -126,7 +126,7 @@ func (doc *Document) WriteTitle2(text *Text) error {
 	color := text.Color
 	word := text.Words
 	Title2 := fmt.Sprintf(XMLTitle2, color, word)
-	_, err := doc.Writer.WriteString(Title2)
+	_, err := doc.writer.WriteString(Title2)
 
 	return err
 }
@@ -134,7 +134,7 @@ func (doc *Document) WriteTitle2(text *Text) error {
 //WriteTitle2WithGrayBg == 灰色panel背景的标题2
 func (doc *Document) WriteTitle2WithGrayBg(text string) error {
 	Title2Gray := fmt.Sprintf(XMLTitle2WithGrayBg, text)
-	_, err := doc.Writer.WriteString(Title2Gray)
+	_, err := doc.writer.WriteString(Title2Gray)
 	//color.Blue("[LOG]:WriteTitle2WithGrayBg Wrote" + strconv.FormatInt(int64(count), 10) + "bytes")
 	return err
 }
@@ -144,7 +144,7 @@ func (doc *Document) WriteTitle3(text *Text) error {
 	color := text.Color
 	word := text.Words
 	Title3 := fmt.Sprintf(XMLTitle3, color, word)
-	_, err := doc.Writer.WriteString(Title3)
+	_, err := doc.writer.WriteString(Title3)
 	//color.Blue("[LOG]:WriteTitle3 Wrote" + strconv.FormatInt(int64(count), 10) + "bytes")
 	return err
 }
@@ -152,7 +152,7 @@ func (doc *Document) WriteTitle3(text *Text) error {
 //WriteTitle3WithGrayBg == 灰色panel背景的标题3
 func (doc *Document) WriteTitle3WithGrayBg(text string) error {
 	Title3Gray := fmt.Sprintf(XMLTitle3WithGrayBg, text)
-	_, err := doc.Writer.WriteString(Title3Gray)
+	_, err := doc.writer.WriteString(Title3Gray)
 	//color.Blue("[LOG]:WriteTitle2WithGrayBg Wrote" + strconv.FormatInt(int64(count), 10) + "bytes")
 	return err
 }
@@ -161,7 +161,7 @@ func (doc *Document) WriteTitle3WithGrayBg(text string) error {
 func (doc *Document) WriteTitle4(text *Text) error {
 	word := text.Words
 	Title4 := fmt.Sprintf(XMLTitle4, word)
-	_, err := doc.Writer.WriteString(Title4)
+	_, err := doc.writer.WriteString(Title4)
 
 	return err
 }
@@ -185,7 +185,7 @@ func (doc *Document) WriteText(text *Text) error {
 			Text = fmt.Sprintf(XMLText, color, size, size, word)
 		}
 	}
-	_, err := doc.Writer.WriteString(Text)
+	_, err := doc.writer.WriteString(Text)
 
 	//color.Blue("[LOG]:WriteText Wrote" + strconv.FormatInt(int64(count), 10) + "bytes")
 	return err
@@ -193,7 +193,7 @@ func (doc *Document) WriteText(text *Text) error {
 
 //WriteBR == 换行
 func (doc *Document) WriteBR() error {
-	_, err := doc.Writer.WriteString(XMLBr)
+	_, err := doc.writer.WriteString(XMLBr)
 
 	return err
 }
@@ -481,7 +481,7 @@ func (doc *Document) WriteTable(table *Table) error {
 
 	tabledata := fmt.Sprintf(XMLTable.String(), rows...)
 
-	_, err := doc.Writer.WriteString(tabledata)
+	_, err := doc.writer.WriteString(tabledata)
 	return err
 }
 
@@ -539,7 +539,7 @@ func (doc *Document) WriteImage(withtext bool, text string, imagesData ...*Image
 		}
 	}
 	xmlimage.WriteString(XMLIMGtail)
-	_, err := doc.Writer.WriteString(xmlimage.String())
+	_, err := doc.writer.WriteString(xmlimage.String())
 	return err
 }
 
@@ -860,7 +860,7 @@ func getImagedata(src string) (string, error) {
 //writehdr ==页眉格式  wrap fucntion
 func (doc *Document) writehdr(text string) error {
 	hdr := fmt.Sprintf(XMLhdr, text)
-	_, err := doc.Writer.WriteString(hdr)
+	_, err := doc.writer.WriteString(hdr)
 	if err != nil {
 		return err
 	}
@@ -876,12 +876,12 @@ func (doc *Document) writehdr(text string) error {
 func (doc *Document) writeftr(mode string, text string) error {
 	switch mode {
 	case "pages":
-		if _, err := doc.Writer.WriteString(XMLftrPages); err != nil {
+		if _, err := doc.writer.WriteString(XMLftrPages); err != nil {
 			return err
 		}
 	case "text":
 		ftrtext := fmt.Sprintf(XMLftrText, text)
-		if _, err := doc.Writer.WriteString(ftrtext); err != nil {
+		if _, err := doc.writer.WriteString(ftrtext); err != nil {
 			return err
 		}
 	default:

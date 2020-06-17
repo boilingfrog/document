@@ -7,8 +7,8 @@ import (
 
 // 通过buffer实现文件的操作
 type Document struct {
-	Buffer *bytes.Buffer
-	Writer *bufio.Writer
+	buffer *bytes.Buffer
+	writer *bufio.Writer
 }
 
 //Text include text configuration
