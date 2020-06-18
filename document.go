@@ -30,7 +30,7 @@ func (doc *Document) SaveAS(name string) error {
 	defer file.Close()
 
 	if err := doc.writer.Flush(); err != nil {
-		return nil
+		return err
 	}
 
 	_, err = doc.buffer.WriteTo(file)
@@ -38,8 +38,8 @@ func (doc *Document) SaveAS(name string) error {
 	return err
 }
 
-// SaveTo ...
-func (doc *Document) SaveTo(writer io.Writer) error {
+// WriteTo ...
+func (doc *Document) WriteTo(writer io.Writer) error {
 	if err := doc.writer.Flush(); err != nil {
 		return err
 	}
